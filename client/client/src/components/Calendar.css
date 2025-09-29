@@ -1,0 +1,240 @@
+
+/* ======================
+   Global Styles
+====================== */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9fc;
+}
+
+/* ======================
+   Navbar
+====================== */
+.navbar {
+  background-color: #5d5d5e;
+  color: white;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .btn-outline-light:hover {
+  background-color: #fff;
+  color: #0d6efd;
+  font-weight: bold;
+}
+
+/* ======================
+   Main Layout (fix height)
+====================== */
+.d-flex.flex-wrap.p-3 {
+  height: calc(100vh - 60px); /* full screen minus navbar */
+  min-height: 0;              /* allow children to shrink */
+}
+
+/* ======================
+   Calendar Header
+====================== */
+.calendar-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  gap: 10px;
+}
+
+.calendar-header h4 {
+  margin: 0 10px;
+  color: #333;
+}
+
+.calendar-header button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  font-size: 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.calendar-header button:hover {
+  background-color: #357abd;
+}
+
+/* ======================
+   Calendar Grid
+====================== */
+.calendar-wrapper {
+  max-width: 700px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  padding: 20px;
+  margin: auto;
+  margin-top: 20px;
+}
+
+.calendar-day {
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.calendar-day:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.calendar-day.today-highlight {
+  border: 2px solid #0d6efd;
+}
+
+.calendar-day.clickable:hover {
+  background-color: #d6e4ff;
+}
+
+.today-highlight {
+  outline: 2px solid #000;
+}
+
+/* ======================
+   Legend
+====================== */
+.legend {
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 10px;
+  display: flex;
+  justify-content: space-around;
+  font-size: 14px;
+}
+
+.color-box {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  border-radius: 3px;
+  border: 1px solid #aaa;
+}
+
+/* ======================
+   Report & Streak Cards
+====================== */
+.report-wrapper .card-box {
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.streak-box {
+  background: #f1f1f1;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.streak-box h6 {
+  margin: 5px 0;
+  color: #333;
+}
+
+/* ======================
+   Mini Calendar
+====================== */
+.mini-calendar td {
+  cursor: pointer;
+  padding: 5px 7px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.mini-calendar td:hover {
+  background-color: rgba(13, 110, 253, 0.2);
+}
+
+/* ======================
+   Dark Mode
+====================== */
+body.bg-dark .calendar-day {
+  background-color: #2c2f33;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.05);
+}
+
+body.bg-dark .calendar-day:hover {
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+/* ======================
+   Responsive
+====================== */
+@media (max-width: 768px) {
+  .calendar-wrapper,
+  .report-wrapper {
+    padding: 1rem !important;
+    max-width: 100% !important;
+  }
+
+  .calendar-grid {
+    gap: 6px;
+  }
+
+  .calendar-day {
+    padding: 12px 0;
+    font-size: 14px;
+  }
+
+  .calendar-header h4 {
+    font-size: 18px;
+  }
+
+  .report-wrapper .card-box,
+  .calendar-wrapper {
+    margin-bottom: 1rem;
+  }
+
+  .navbar .navbar-brand {
+    font-size: 18px;
+  }
+
+  .navbar .fw-semibold {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 576px) {
+  .calendar-day {
+    padding: 8px 0;
+    font-size: 13px;
+  }
+
+  .calendar-grid {
+    gap: 5px;
+  }
+
+  .calendar-header h4 {
+    font-size: 16px;
+  }
+}
+
