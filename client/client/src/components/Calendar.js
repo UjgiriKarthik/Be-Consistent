@@ -1,4 +1,3 @@
-
 // client/src/components/Calendar.js
 import AssistantChat from './AssistantChat';
 import 'bootstrap/dist/css/bootstrap.min.css';
