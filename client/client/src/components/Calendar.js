@@ -1,3 +1,4 @@
+
 // client/src/components/Calendar.js
 import AssistantChat from './AssistantChat';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -253,13 +254,14 @@ const Calendar = () => {
     }
   };
 
+
   return (
     <div>
       {/* Navbar */}
       <nav className="navbar navbar-expand-lg px-3 shadow-sm">
         <span className="navbar-brand fw-bold">Be Consistent</span>
         <div className="ms-auto d-flex align-items-center gap-3">
-          <h5 className='pt-3'>{user?.name}</h5>
+          <h5 className="pt-3">{user?.name}</h5>
           <div className="dropdown">
             <img
               src={user?.avatar || "https://assets.leetcode.com/users/default_avatar.jpg"}
@@ -274,9 +276,7 @@ const Calendar = () => {
               <li className="mb-2"><strong>{user?.name}</strong></li>
               <li className="mb-2">
                 <label className="form-label">Reminder Time</label>
-                <input
-                  type="time"
-                  className="form-control"
+                <input type="time" className="form-control"
                   value={reminderTime}
                   onChange={(e) => setReminderTime(e.target.value)}
                 />
@@ -289,9 +289,7 @@ const Calendar = () => {
               </li>
               <li className="mb-2">
                 <label className="form-label">Report Time</label>
-                <input
-                  type="time"
-                  className="form-control"
+                <input type="time" className="form-control"
                   value={reportTime}
                   onChange={(e) => setReportTime(e.target.value)}
                 />
@@ -312,84 +310,88 @@ const Calendar = () => {
         </div>
       </nav>
 
-      <div className="d-flex flex-wrap p-3">
-        {/* LEFT: Report + Streak + Mini Calendar */}
-        {summary && (
-          <div className="report-wrapper pe-3 d-flex flex-column gap-3" style={{ flex: 1, minWidth: '250px', maxWidth: '25%' }}>
-            <div className="rounded shadow p-3 bg-white text-dark">
-              <h5 className="text-center">📊 Monthly Report</h5>
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={chartData}>
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="value">
-                    {chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={barColors[index % barColors.length]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+      {/* Main Layout */}
+      <div className="container-xl py-3">
+        <div className="row g-3">
+          {/* LEFT: Report + Streak + Mini Calendar */}
+          {summary && (
+            <div className="col-12 col-md-4 col-lg-3">
+              <div className="rounded shadow p-3 bg-white text-dark mb-3">
+                <h5 className="text-center">📊 Monthly Report</h5>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={chartData}>
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="value">
+                      {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={barColors[index % barColors.length]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="rounded shadow p-3 text-center bg-white text-dark">
+                <h6>🔥 <strong>Current Streak:</strong> {summary.currentStreak} day(s)</h6>
+                <h6>🏆 <strong>Best Streak:</strong> {summary.bestStreak} day(s)</h6>
+                {renderMiniCalendar()}
+              </div>
             </div>
+          )}
 
-            <div className="rounded shadow p-3 text-center bg-white text-dark">
-              <h6>🔥 <strong>Current Streak:</strong> {summary.currentStreak} day(s)</h6>
-              <h6>🏆 <strong>Best Streak:</strong> {summary.bestStreak} day(s)</h6>
-              {renderMiniCalendar()}
-            </div>
-          </div>
-        )}
+          {/* CENTER: Main Calendar */}
+          <div className="col-12 col-md-8 col-lg-6">
+            <div className="calendar-wrapper p-3 rounded shadow flex-grow-1 bg-white text-dark" style={{ minWidth: '400px' }}>
+              <div className="calendar-header d-flex justify-content-center align-items-center mb-3 gap-3">
+                <button onClick={prevMonth} className="btn btn-outline-primary btn-sm">{'<'}</button>
+                <h4 className="mb-0">{monthName} {currentYear}</h4>
+                <button onClick={nextMonth} className="btn btn-outline-primary btn-sm">{'>'}</button>
+              </div>
 
-        {/* CENTER: Main Calendar */}
-        <div className="calendar-wrapper p-3 rounded shadow flex-grow-1 bg-white text-dark" style={{ minWidth: '400px' }}>
-          <div className="calendar-header d-flex justify-content-center align-items-center mb-3 gap-3">
-            <button onClick={prevMonth} className="btn btn-outline-primary btn-sm">{'<'}</button>
-            <h4 className="mb-0">{monthName} {currentYear}</h4>
-            <button onClick={nextMonth} className="btn btn-outline-primary btn-sm">{'>'}</button>
-          </div>
+              <div className="calendar-grid">
+                {Array.from({ length: daysInMonth }, (_, idx) => {
+                  const day = idx + 1;
+                  const dateKey = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                  const isToday =
+                    day === today.getDate() &&
+                    currentMonth === today.getMonth() &&
+                    currentYear === today.getFullYear();
+                  const percentage = taskMap[dateKey];
+                  const bgColor =
+                    percentage === undefined || percentage === null
+                      ? '#f5f5f5'
+                      : getColor(percentage);
 
-          <div className="calendar-grid">
-            {Array.from({ length: daysInMonth }, (_, idx) => {
-              const day = idx + 1;
-              const dateKey = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-              const isToday =
-                day === today.getDate() &&
-                currentMonth === today.getMonth() &&
-                currentYear === today.getFullYear();
-              const percentage = taskMap[dateKey];
-              const bgColor =
-                percentage === undefined || percentage === null
-                  ? '#f5f5f5'
-                  : getColor(percentage);
-
-              return (
-                <div
-                  key={day}
-                  className={`calendar-day clickable ${isToday ? 'today-highlight' : ''}`}
-                  onClick={() => handleDateClick(day)}
-                  style={{
-                    backgroundColor: bgColor,
-                    gridColumnStart: day === 1 ? firstDay + 1 : 'auto',
-                  }}
-                >
-                  <div style={{ fontSize: '18px' }}>{day}</div>
-                  {percentage !== undefined && (
-                    <div style={{ fontSize: '12px', color: '#000' }}>
-                      {percentage}%
+                  return (
+                    <div
+                      key={day}
+                      className={`calendar-day clickable ${isToday ? 'today-highlight' : ''}`}
+                      onClick={() => handleDateClick(day)}
+                      style={{
+                        backgroundColor: bgColor,
+                        gridColumnStart: day === 1 ? firstDay + 1 : 'auto',
+                      }}
+                    >
+                      <div style={{ fontSize: '18px' }}>{day}</div>
+                      {percentage !== undefined && (
+                        <div style={{ fontSize: '12px', color: '#000' }}>
+                          {percentage}%
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              );
-            })}
+                  );
+                })}
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* RIGHT: Productivity Assistant */}
-        <div className="assistant-wrapper ps-3" style={{ flex: 1, minWidth: '250px', maxWidth: '25%' }}>
-          <div className="rounded shadow p-3 h-100 d-flex flex-column bg-white text-dark">
-            <h6 className="text-center">💬 Productivity Assistant</h6>
-            <AssistantChat />
+          {/* RIGHT: Productivity Assistant */}
+          <div className="col-12 col-md-12 col-lg-3">
+            <div className="rounded shadow p-3 h-100 d-flex flex-column bg-white text-dark">
+              <h6 className="text-center">💬 Productivity Assistant</h6>
+              <AssistantChat />
+            </div>
           </div>
         </div>
       </div>
