@@ -1,4 +1,3 @@
-// File: client/src/components/Signup.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
@@ -13,19 +12,22 @@ const Signup = () => {
   const [message, setMessage] = useState("");
   const [resendTimer, setResendTimer] = useState(0);
   const [otpSent, setOtpSent] = useState(false);
-  const [devOtp, setDevOtp] = useState(""); // For development only
+  const [devOtp, setDevOtp] = useState(""); // For dev/debug only
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
+  // 🧭 API Base URL (comes from .env)
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
-    let timer;
     if (resendTimer > 0) {
-      timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
+      const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
+      return () => clearTimeout(timer);
     }
-    return () => clearTimeout(timer);
   }, [resendTimer]);
 
+  // ----- Step 1: Send OTP -----
   const sendOtp = async () => {
     if (!email || !name || !password) {
       setError("⚠️ Please fill in all fields");
@@ -35,11 +37,11 @@ const Signup = () => {
     setLoading(true);
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/verify/send-otp",
+        `${API_BASE_URL}/api/verify/send-otp`,
         { email }
       );
 
-      setDevOtp(data.otp); // Dev debug
+      setDevOtp(data.otp); // 🧪 Dev only
       setStep(2);
       setError("");
       setMessage("OTP sent to your email.");
@@ -47,14 +49,14 @@ const Signup = () => {
       setResendTimer(60);
     } catch (err) {
       setError(
-        err.response?.data?.message ||
-          "Failed to send OTP. Please try again later."
+        err.response?.data?.message || "Failed to send OTP. Please try again."
       );
     } finally {
       setLoading(false);
     }
   };
 
+  // ----- Step 2: Verify OTP and Register -----
   const verifyAndRegister = async () => {
     if (!otp.trim()) {
       setError("⚠️ Please enter the OTP");
@@ -64,7 +66,7 @@ const Signup = () => {
     setLoading(true);
     try {
       const verifyRes = await axios.post(
-        "http://localhost:5000/api/verify/verify-otp",
+        `${API_BASE_URL}/api/verify/verify-otp`,
         { email, otp: otp.trim() }
       );
 
@@ -73,29 +75,29 @@ const Signup = () => {
         return;
       }
 
-      const registerRes = await axios.post(
-        "http://localhost:5000/api/users/register",
-        { name, email, password }
-      );
+      await axios.post(`${API_BASE_URL}/api/users/register`, {
+        name,
+        email,
+        password,
+      });
 
       setMessage("✅ Registration successful! Redirecting to login...");
       setError("");
       setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
-      setError(
-        err.response?.data?.message || "User registration failed."
-      );
+      setError(err.response?.data?.message || "User registration failed.");
     } finally {
       setLoading(false);
     }
   };
 
+  // ----- Resend OTP -----
   const handleResendOtp = async () => {
     if (resendTimer > 0) return;
 
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/verify/send-otp",
+        `${API_BASE_URL}/api/verify/send-otp`,
         { email }
       );
       setDevOtp(data.otp);
@@ -103,7 +105,7 @@ const Signup = () => {
       setMessage("OTP resent successfully.");
       setOtp("");
       setResendTimer(60);
-    } catch (err) {
+    } catch {
       setError("Resend failed. Try again later.");
     }
   };
@@ -114,8 +116,11 @@ const Signup = () => {
 
       {message && <div className="alert alert-success">{message}</div>}
       {error && <div className="alert alert-danger">{error}</div>}
-      {devOtp && <div className="alert alert-info">🧪 Dev OTP: {devOtp}</div>}
+      {devOtp && (
+        <div className="alert alert-info">🧪 Dev OTP (Debug): {devOtp}</div>
+      )}
 
+      {/* Step 1: User Details */}
       {step === 1 && (
         <form
           onSubmit={(e) => {
@@ -167,6 +172,7 @@ const Signup = () => {
         </form>
       )}
 
+      {/* Step 2: OTP Verification */}
       {step === 2 && (
         <form
           onSubmit={(e) => {
