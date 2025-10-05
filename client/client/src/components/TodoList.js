@@ -3,6 +3,8 @@ import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import "./TodoList.css";
 
+const API_BASE = process.env.REACT_APP_API_URL; // ✅ Use environment variable
+
 const TodoList = ({ date, onTasksUpdated }) => {
   const userId = JSON.parse(localStorage.getItem("user"))?.email;
 
@@ -17,13 +19,11 @@ const TodoList = ({ date, onTasksUpdated }) => {
 
   const isToday = new Date().toISOString().slice(0, 10) === date;
 
-  // ✅ Stable fetch function with useCallback
+  // ✅ Fetch tasks
   const fetchTasks = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/tasks/${date}/${userId}`
-      );
+      const res = await axios.get(`${API_BASE}/api/tasks/${date}/${userId}`);
       setTasks(res.data);
     } catch {
       setError("Failed to load tasks.");
@@ -43,7 +43,7 @@ const TodoList = ({ date, onTasksUpdated }) => {
 
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/tasks/incomplete/${yDate}/${userId}`
+        `${API_BASE}/api/tasks/incomplete/${yDate}/${userId}`
       );
       setYesterdayTasks(res.data);
       setSelectedTasks([]);
@@ -59,7 +59,7 @@ const TodoList = ({ date, onTasksUpdated }) => {
     try {
       await Promise.all(
         selectedTasks.map((task) =>
-          axios.post("http://localhost:5000/api/tasks", {
+          axios.post(`${API_BASE}/api/tasks`, {
             userId,
             title: task.title,
             date,
@@ -81,9 +81,7 @@ const TodoList = ({ date, onTasksUpdated }) => {
 
   const toggleTaskSelection = (task) => {
     setSelectedTasks((prev) =>
-      prev.includes(task)
-        ? prev.filter((t) => t !== task)
-        : [...prev, task]
+      prev.includes(task) ? prev.filter((t) => t !== task) : [...prev, task]
     );
   };
 
@@ -91,7 +89,7 @@ const TodoList = ({ date, onTasksUpdated }) => {
     if (!title.trim()) return;
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/tasks", {
+      await axios.post(`${API_BASE}/api/tasks`, {
         userId,
         title,
         date,
@@ -110,7 +108,7 @@ const TodoList = ({ date, onTasksUpdated }) => {
   const toggleTask = async (id, isCompleted) => {
     setLoading(true);
     try {
-      await axios.put(`http://localhost:5000/api/tasks/${id}`, {
+      await axios.put(`${API_BASE}/api/tasks/${id}`, {
         isCompleted: !isCompleted,
       });
       await fetchTasks();
@@ -125,7 +123,7 @@ const TodoList = ({ date, onTasksUpdated }) => {
   const deleteTask = async (id) => {
     setLoading(true);
     try {
-      await axios.delete(`http://localhost:5000/api/tasks/${id}`);
+      await axios.delete(`${API_BASE}/api/tasks/${id}`);
       await fetchTasks();
       onTasksUpdated?.(date);
     } catch {
