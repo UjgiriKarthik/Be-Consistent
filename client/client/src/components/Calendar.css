@@ -189,3 +189,46 @@ body.bg-dark .calendar-day:hover {
 /* ======================
    Responsive
 ====================== */
+/* ======================
+   Mobile Calendar Fix
+====================== */
+@media (max-width: 480px) {
+  .calendar-wrapper {
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+    padding: 10px;
+    justify-items: center;
+  }
+
+  .calendar-day {
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    max-width: 42px;  /* prevents cells from stretching too wide */
+    font-size: 11px;
+    border-radius: 8px;
+    padding: 0;
+  }
+
+  .calendar-header h4 {
+    font-size: 16px;
+  }
+
+  .calendar-header button {
+    font-size: 14px;
+    padding: 4px 8px;
+  }
+
+  .calendar-day div {
+    font-size: 10px;
+  }
+
+  .container-fluid.p-3 {
+    padding: 0.5rem !important;
+  }
+}
