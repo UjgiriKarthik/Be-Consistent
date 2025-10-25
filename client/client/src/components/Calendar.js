@@ -341,7 +341,7 @@ const Calendar = () => {
               </ResponsiveContainer>
             </div>
 
-            <div className="rounded shadow p-3 text-center bg-white text-dark">
+            <div className="rounded shadow p-3 text-center bg-white text-dark mt-3">
               <h6>🔥 <strong>Current Streak:</strong> {summary.currentStreak} day(s)</h6>
               <h6>🏆 <strong>Best Streak:</strong> {summary.bestStreak} day(s)</h6>
               {renderMiniCalendar()}
