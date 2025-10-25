@@ -262,15 +262,21 @@ const Calendar = () => {
         <div className="ms-auto d-flex align-items-center gap-3">
           <h5 className='pt-3'>{user?.name}</h5>
           <div className="dropdown">
-            <img
-              src={user?.avatar || "https://assets.leetcode.com/users/default_avatar.jpg"}
-              alt="Profile"
-              className="rounded-circle"
-              style={{ width: "30px", height: "30px", cursor: "pointer" }}
+            <div
+              role="button"
               id="profileDropdown"
               data-bs-toggle="dropdown"
               aria-expanded="false"
-            />
+              style={{ display: "inline-block", cursor: "pointer" }}
+            >
+              <img
+                src={user?.avatar || "https://assets.leetcode.com/users/default_avatar.jpg"}
+                alt="Profile"
+                className="rounded-circle"
+                style={{ width: "30px", height: "30px" }}
+              />
+            </div>
+
             <ul className="dropdown-menu dropdown-menu-end p-3" aria-labelledby="profileDropdown">
               <li className="mb-2"><strong>{user?.name}</strong></li>
               <li className="mb-2">
@@ -313,10 +319,11 @@ const Calendar = () => {
         </div>
       </nav>
 
-      <div className="d-flex flex-wrap p-3">
+      <div className="container-fluid p-3">
+        <div className="row g-3">
         {/* LEFT: Report + Streak + Mini Calendar */}
         {summary && (
-          <div className="report-wrapper pe-3 d-flex flex-column gap-3" style={{ flex: 1, minWidth: '250px', maxWidth: '25%' }}>
+          <div className="col-12 col-md-4 col-lg-3">
             <div className="rounded shadow p-3 bg-white text-dark">
               <h5 className="text-center">📊 Monthly Report</h5>
               <ResponsiveContainer width="100%" height={200}>
@@ -343,7 +350,8 @@ const Calendar = () => {
         )}
 
         {/* CENTER: Main Calendar */}
-        <div className="calendar-wrapper p-3 rounded shadow flex-grow-1 bg-white text-dark" style={{ minWidth: '400px' }}>
+        <div className="col-12 col-md-8 col-lg-6">
+          <div className="calendar-wrapper p-3 rounded shadow bg-white text-dark">
           <div className="calendar-header d-flex justify-content-center align-items-center mb-3 gap-3">
             <button onClick={prevMonth} className="btn btn-outline-primary btn-sm">{'<'}</button>
             <h4 className="mb-0">{monthName} {currentYear}</h4>
@@ -384,15 +392,17 @@ const Calendar = () => {
               );
             })}
           </div>
+          </div>
         </div>
 
         {/* RIGHT: Productivity Assistant */}
-        <div className="assistant-wrapper ps-3" style={{ flex: 1, minWidth: '250px', maxWidth: '25%' }}>
+        <div className="col-12 col-lg-3">
           <div className="rounded shadow p-3 h-100 d-flex flex-column bg-white text-dark">
             <h6 className="text-center">💬 Productivity Assistant</h6>
             <AssistantChat />
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
