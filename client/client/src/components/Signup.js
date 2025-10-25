@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 const Signup = () => {
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
@@ -34,11 +36,7 @@ const Signup = () => {
 
     setLoading(true);
     try {
-      const { data } = await axios.post(
-        "http://localhost:5000/api/verify/send-otp",
-        { email }
-      );
-
+      const { data } = await axios.post(`${API_BASE}/api/verify/send-otp`, { email });
       setDevOtp(data.otp); // Dev debug
       setStep(2);
       setError("");
@@ -46,10 +44,7 @@ const Signup = () => {
       setOtpSent(true);
       setResendTimer(60);
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          "Failed to send OTP. Please try again later."
-      );
+      setError(err.response?.data?.message || "Failed to send OTP. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -63,28 +58,20 @@ const Signup = () => {
 
     setLoading(true);
     try {
-      const verifyRes = await axios.post(
-        "http://localhost:5000/api/verify/verify-otp",
-        { email, otp: otp.trim() }
-      );
+      const verifyRes = await axios.post(`${API_BASE}/api/verify/verify-otp`, { email, otp: otp.trim() });
 
       if (!verifyRes.data.verified) {
         setError("❌ Invalid OTP");
         return;
       }
 
-      const registerRes = await axios.post(
-        "http://localhost:5000/api/users/register",
-        { name, email, password }
-      );
+      await axios.post(`${API_BASE}/api/users/register`, { name, email, password });
 
       setMessage("✅ Registration successful! Redirecting to login...");
       setError("");
       setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
-      setError(
-        err.response?.data?.message || "User registration failed."
-      );
+      setError(err.response?.data?.message || "User registration failed.");
     } finally {
       setLoading(false);
     }
@@ -94,10 +81,7 @@ const Signup = () => {
     if (resendTimer > 0) return;
 
     try {
-      const { data } = await axios.post(
-        "http://localhost:5000/api/verify/send-otp",
-        { email }
-      );
+      const { data } = await axios.post(`${API_BASE}/api/verify/send-otp`, { email });
       setDevOtp(data.otp);
       setError("");
       setMessage("OTP resent successfully.");
@@ -185,11 +169,7 @@ const Signup = () => {
             />
           </div>
 
-          <button
-            type="submit"
-            className="btn btn-success w-100 mb-2"
-            disabled={loading}
-          >
+          <button type="submit" className="btn btn-success w-100 mb-2" disabled={loading}>
             {loading ? "Verifying..." : "Verify & Register"}
           </button>
 
@@ -197,11 +177,7 @@ const Signup = () => {
             {resendTimer > 0 ? (
               <p className="text-muted">Resend OTP in {resendTimer}s</p>
             ) : (
-              <button
-                type="button"
-                className="btn btn-link p-0"
-                onClick={handleResendOtp}
-              >
+              <button type="button" className="btn btn-link p-0" onClick={handleResendOtp}>
                 Resend OTP
               </button>
             )}

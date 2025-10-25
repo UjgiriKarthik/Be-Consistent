@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import "./TodoList.css";
 
-const API_BASE = process.env.REACT_APP_API_URL; // ✅ Use environment variable
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 const TodoList = ({ date, onTasksUpdated }) => {
   const userId = JSON.parse(localStorage.getItem("user"))?.email;
@@ -19,7 +19,6 @@ const TodoList = ({ date, onTasksUpdated }) => {
 
   const isToday = new Date().toISOString().slice(0, 10) === date;
 
-  // ✅ Fetch tasks
   const fetchTasks = useCallback(async () => {
     setLoading(true);
     try {
